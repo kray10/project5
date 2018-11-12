@@ -89,6 +89,14 @@ bool AssignNode::typeAnalysis(){
 	return result;
 }
 
+bool PlusNode::typeAnalysis(){
+	bool result = exp1->typeAnalysis() && exp2->typeAnalysis();
+	if(exp1->getType() != "int" && exp1->getType() != "")
+	{
+		Err::
+	}
+}
+
 /*
 * Creates a comma-separated string listing the types of formals.
 * This function mostly serves as a helper for
@@ -126,4 +134,3 @@ std::string FormalDeclNode::getTypeString(){
 }
 
 } // End namespace LILC
-
