@@ -93,7 +93,18 @@ bool PostIncStmtNode::typeAnalysis(){
 	bool result = myExp->typeAnalysis();
 	if (myExp->getType() != "int" && myExp->getType() != "") {
 		Err::nonArthimetic(getPosition());
+		result = false;
 	}
+	return false;
+}
+
+bool PostDecStmtNode::typeAnalysis(){
+	bool result = myExp->typeAnalysis();
+	if (myExp->getType() != "int" && myExp->getType() != "") {
+		Err::nonArthimetic(getPosition());
+		result = false;
+	}
+	return false;
 }
 
 /*
