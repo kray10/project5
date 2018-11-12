@@ -11,21 +11,83 @@ bool ASTNode::typeAnalysis(){
 }
 
 bool ProgramNode::typeAnalysis(){
-	//TODO: recurse down the AST, making sure to
-	// uncover any type errors as detailed in the 
-	// project 5 spec
-	std::cerr << "[DELETE ME]: program node typeAnalysis\n"
-	" should probably check for some children typing before\n"
-	" declaring victory here.\n";
-	
-	return false;
+	return myDeclList->typeAnalysis();
 }
+
+bool DeclListNode::typeAnalysis(){
+	bool result = true;
+	for (std::list<DeclNode *>::iterator
+		it=myDecls->begin();
+		it != myDecls->end(); ++it){
+	    DeclNode * elt = *it;
+	    result = result && it->typeAnalysis();
+	}
+	return result;
+}
+
+bool IdNode::typeAnalysis(){
+	return true;
+}
+
+bool FormalsListNode::typeAnalysis(){
+	bool result = true;
+	for (std::list<FormalDeclNode *>::iterator
+		it=myFormals->begin();
+		it != myFormals->end(); ++it){
+	    FormalDeclNode * elt = *it;
+	    result = result && it->typeAnalysis();
+	}
+	return result;
+}
+
+bool ExpListNode::typeAnalysis(){
+	bool result = true;
+	for (std::list<ExpNode *>::iterator
+		it=myExps->begin();
+		it != myExps->end(); ++it){
+	    ExpNode * elt = *it;
+	    result = result && it->typeAnalysis();
+	}
+	return result;
+}
+
+bool StmtListNode::typeAnalysis(){
+	bool result = true;
+	for (std::list<StmtNode *>::iterator
+		it=myEmyStmtsxps->begin();
+		it != myStmts->end(); ++it){
+	    StmtNode * elt = *it;
+	    result = result && it->typeAnalysis();
+	}
+	return result;
+}
+
+bool FnBodyNode::typeAnalysis(){
+	return (myDeclList->typeAnalysis() && myStmtList->typeAnalysis());
+}
+
+bool FnDeclNode::typeAnalysis(){
+	return (myRetType->typeAnalysis()
+					&& myId->typeAnalysis()
+					&& myFormals->typeAnalysis()
+					&& myBody->nameAnalysis());
+}
+
+bool FormalDeclNode::typeAnalysis(){
+	return myRetType->typeAnalysis();
+}
+
+bool StructDeclNode::typeAnalysis(){
+	return myDeclList->typeAnalysis();
+}
+
+
 
 /*
 * Creates a comma-separated string listing the types of formals.
-* This function mostly serves as a helper for 
-* FnDeclNode::getTypeString() in building a function 
-* type signature for unparsing. 
+* This function mostly serves as a helper for
+* FnDeclNode::getTypeString() in building a function
+* type signature for unparsing.
 */
 std::string FormalsListNode::getTypeString(){
 	std::string res = "";
@@ -40,12 +102,12 @@ std::string FormalsListNode::getTypeString(){
 
 /*
 * Create a string representing the type signature of a
-* function.  This function is used for building a function 
-* type signature for unparsing. 
+* function.  This function is used for building a function
+* type signature for unparsing.
 */
 std::string FnDeclNode::getTypeString(){
-	return myFormals->getTypeString() 
-		+ "->" 
+	return myFormals->getTypeString()
+		+ "->"
 		+ myRetType->getTypeString();
 }
 
@@ -57,5 +119,5 @@ std::string FormalDeclNode::getTypeString(){
 	return myType->getTypeString();
 }
 
-} // End namespace LILC 
+} // End namespace LILC
 
