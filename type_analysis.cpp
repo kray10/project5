@@ -89,6 +89,24 @@ bool AssignNode::typeAnalysis(){
 	return result;
 }
 
+bool PlusNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "int";
+	if(myExp1->getType() != "int" && myExp1->getType() != "")
+	{
+		Err::nonArthimetic(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "int" && myExp2->getType() != "")
+	{
+		Err::nonArthimetic(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
 bool PostIncStmtNode::typeAnalysis(){
 	bool result = myExp->typeAnalysis();
 	if (myExp->getType() != "int" && myExp->getType() != "") {
@@ -144,4 +162,3 @@ std::string FormalDeclNode::getTypeString(){
 }
 
 } // End namespace LILC
-
