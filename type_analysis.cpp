@@ -1,5 +1,6 @@
 #include "ast.hpp"
 #include "symbol_table.hpp"
+#include "err.hpp"
 
 namespace LILC{
 
@@ -20,13 +21,9 @@ bool DeclListNode::typeAnalysis(){
 		it=myDecls->begin();
 		it != myDecls->end(); ++it){
 	    DeclNode * elt = *it;
-	    result = result && it->typeAnalysis();
+	    result = result && elt->typeAnalysis();
 	}
 	return result;
-}
-
-bool IdNode::typeAnalysis(){
-	return true;
 }
 
 bool FormalsListNode::typeAnalysis(){
@@ -35,7 +32,7 @@ bool FormalsListNode::typeAnalysis(){
 		it=myFormals->begin();
 		it != myFormals->end(); ++it){
 	    FormalDeclNode * elt = *it;
-	    result = result && it->typeAnalysis();
+	    result = result && elt->typeAnalysis();
 	}
 	return result;
 }
@@ -46,7 +43,7 @@ bool ExpListNode::typeAnalysis(){
 		it=myExps->begin();
 		it != myExps->end(); ++it){
 	    ExpNode * elt = *it;
-	    result = result && it->typeAnalysis();
+	    result = result && elt->typeAnalysis();
 	}
 	return result;
 }
@@ -54,10 +51,10 @@ bool ExpListNode::typeAnalysis(){
 bool StmtListNode::typeAnalysis(){
 	bool result = true;
 	for (std::list<StmtNode *>::iterator
-		it=myEmyStmtsxps->begin();
+		it=myStmts->begin();
 		it != myStmts->end(); ++it){
 	    StmtNode * elt = *it;
-	    result = result && it->typeAnalysis();
+	    result = result && elt->typeAnalysis();
 	}
 	return result;
 }
@@ -70,18 +67,27 @@ bool FnDeclNode::typeAnalysis(){
 	return (myRetType->typeAnalysis()
 					&& myId->typeAnalysis()
 					&& myFormals->typeAnalysis()
-					&& myBody->nameAnalysis());
+					&& myBody->typeAnalysis());
 }
 
 bool FormalDeclNode::typeAnalysis(){
-	return myRetType->typeAnalysis();
+	return myType->typeAnalysis();
 }
 
 bool StructDeclNode::typeAnalysis(){
 	return myDeclList->typeAnalysis();
 }
 
-
+bool AssignNode::typeAnalysis(){
+	bool result = myExpLHS->typeAnalysis() && myExpRHS->typeAnalysis();
+	if (myExpLHS->getType() != myExpRHS->getType() && result) {
+		Err::typeMismatch(myExpLHS->getPosition());
+		result = false;
+	} else if (myExpLHS->getType() == myExpRHS->getType()) {
+		myType = myExpLHS->getType();
+	}
+	return result;
+}
 
 /*
 * Creates a comma-separated string listing the types of formals.

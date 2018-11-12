@@ -18,7 +18,7 @@ bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 	// introduced in C++11. It works just like an iterator
 	// over the list. The below iterates over every
 	// element in the list pointed to by myDecls, with the
-	// iteration variable named decl. 
+	// iteration variable named decl.
 	for (DeclNode * decl : *myDecls){
 		bool thisResult = decl->nameAnalysis(symTab);
 		result = thisResult && result;
@@ -27,14 +27,14 @@ bool DeclListNode::nameAnalysis(SymbolTable * symTab){
 }
 
 /*
-* DeclListNodes are used in a variety of ways in the AST: 
-* This function does nameAnalysis for the case of a 
+* DeclListNodes are used in a variety of ways in the AST:
+* This function does nameAnalysis for the case of a
 * DeclListNode that represents the fields of a struct.
 */
 FieldMap * DeclListNode::fieldNameAnalysis(SymbolTable * symTab){
 	//The alias type "FieldMap" is introduced at the
 	// top of symbol_table.hpp and is just a shorthand
-	// for the type 
+	// for the type
 	// std::unordered_map<std::stirng, LILC::VarSymbol *>
 	FieldMap * fields = new FieldMap();
 	bool res = this->fieldNameAnalysis(symTab, fields);
@@ -49,27 +49,27 @@ FieldMap * DeclListNode::fieldNameAnalysis(SymbolTable * symTab){
 * Helper function for fieldNameAnalysis
 */
 bool DeclListNode::fieldNameAnalysis(
-	SymbolTable * symTab, 
+	SymbolTable * symTab,
 	FieldMap * fieldMap
 ){
 	for (DeclNode * decl : *myDecls){
 		if (decl->getKind() != DeclKind::VAR){
 			//It's syntactically impossible
 			// to declare other Kinds inside
-			// structs but I guess its still 
-			// make a sanity check 
+			// structs but I guess its still
+			// make a sanity check
 			return false;
 		}
 		VarDeclNode * varDecl = (VarDeclNode *)decl;
 		std::string ePos = varDecl->getPosition();
 		std::string fName = varDecl->getName();
 		std::string fTypeStr = varDecl->getTypeString();
-		if (varDecl->getTypeString() == "void"){ 
-			return Err::badVoid(ePos); 
+		if (varDecl->getTypeString() == "void"){
+			return Err::badVoid(ePos);
 		}
 		VarSymbol * fSym =
 			VarSymbol::produce(symTab, fTypeStr);
-		if (fSym == nullptr){ 
+		if (fSym == nullptr){
 			return Err::undefType(ePos);
 		}
 		if (fieldMap->find(fName) != fieldMap->end()){
@@ -89,7 +89,7 @@ bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 	std::string ePos = getPosition();
 
 	if (myType->isVoid()){ return Err::badVoid(ePos); }
-	if (symTab->collides(name)){ return Err::multiDecl(ePos); } 
+	if (symTab->collides(name)){ return Err::multiDecl(ePos); }
 
 	VarSymbol * vSym = VarSymbol::produce(symTab, getTypeString());
 	if (vSym == nullptr){ return Err::undefType(ePos); }
@@ -97,10 +97,10 @@ bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 }
 
 /*
-* Create a new symbol for use as function return. 
+* Create a new symbol for use as function return.
 * while it may seem like overkill to create this symbol
-* during name analysis, it may come in handy for use 
-* in code generation (since it can track the memory 
+* during name analysis, it may come in handy for use
+* in code generation (since it can track the memory
 * slot for the return.
 */
 VarSymbol * FnDeclNode::makeRetSymbol(SymbolTable * symTab){
@@ -128,8 +128,8 @@ bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 	ScopeTable * outerScope = symTab->currentScope();
 
 	//Create a new scope regardless of whether or
-	// not the function signature is valid. Doing 
-	// this here means that doing nameAnalysis 
+	// not the function signature is valid. Doing
+	// this here means that doing nameAnalysis
 	// on the formals will put the symbols in the
 	// function body scope (which is what we want)
 	symTab->enterScope();
@@ -176,13 +176,13 @@ bool FormalDeclNode::nameAnalysis(SymbolTable * symTab) {
 	std::string ePos = myDeclaredID->getPosition();
 
 	if (myType->isVoid()){ return Err::badVoid(ePos); }
-	if (symTab->collides(name)){ return Err::multiDecl(ePos); } 
+	if (symTab->collides(name)){ return Err::multiDecl(ePos); }
 
 	VarSymbol * vSym = VarSymbol::produce(symTab, getTypeString());
 	this->mySymbol = vSym;
 
 	if (vSym == nullptr){ return Err::undefType(ePos); }
-	
+
 	return symTab->add(name, vSym);
 }
 
@@ -227,11 +227,11 @@ bool CallExpNode::nameAnalysis(SymbolTable * symTab) {
 bool StructNode::nameAnalysis(SymbolTable * symTab) {
 	/*
 	There's no need for nameAnalysis to descend all
-	 the way to type nodes like StructNode. Instead, it 
+	 the way to type nodes like StructNode. Instead, it
 	 can stop at the declaration containing this node
 	 and special-case the analysis there. Thus, if
 	 the analysis has gotten this far down, it's a sign
-	 that something is wrong. 
+	 that something is wrong.
 	*/
 	throw runtime_error("Notimplemented");
 }
@@ -250,7 +250,7 @@ StructSymbol * IdNode::dotNameAnalysis(SymbolTable * symTab){
 
 	StructSymbol * fieldType = mySymbol->getCompositeType();
 	if (fieldType == nullptr){
-		Err::badDotLHS(getPosition()); 
+		Err::badDotLHS(getPosition());
 	}
 	return fieldType;
 }
@@ -263,7 +263,7 @@ StructSymbol * DotAccessNode::dotNameAnalysis(SymbolTable * symTab){
 	VarSymbol * fieldSymbol = baseStruct->getField(fieldName);
 	StructSymbol * fieldType = fieldSymbol->getCompositeType();
 	if (fieldType == nullptr){
-		Err::badDotLHS(myId->getPosition()); 
+		Err::badDotLHS(myId->getPosition());
 		return nullptr;
 	}
 	myId->setSymbol(fieldSymbol);
@@ -300,8 +300,10 @@ bool StmtListNode::nameAnalysis(SymbolTable * symTab) {
 
 bool ExpListNode::nameAnalysis(SymbolTable * symTab) {
 	bool valid = true;
-	for(ExpNode * exp : myExps) {
-		valid = exp->nameAnalysis(symTab) && valid;
+	for (std::list<ExpNode *>::iterator it=myExps->begin();
+		it != myExps->end(); ++it){
+	    ExpNode * elt = *it;
+			valid = elt->nameAnalysis(symTab) && valid;
 	}
 	return valid;
 }

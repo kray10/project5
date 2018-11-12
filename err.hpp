@@ -7,8 +7,8 @@ namespace LILC{
 
 class Err{
 	public:
-	static void report(std::string pos, std::string msg){ 
-		std::cerr << pos 
+	static void report(std::string pos, std::string msg){
+		std::cerr << pos
 			<< " ***ERROR*** " << msg << std::endl;
 	}
 
@@ -38,6 +38,10 @@ class Err{
 
 	static bool badDotRHS(std::string pos){
 		report(pos, "Invalid struct field name");
+	}
+
+	static bool typeMismatch(std::string pos) {
+		report(pos, "Type mismatch");
 	}
 };
 

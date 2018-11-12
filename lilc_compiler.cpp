@@ -83,13 +83,13 @@ const char * outfile )
 		case TokenTag::INTLITERAL:
 			{
 			IntLitToken * tok = (IntLitToken *)lexeme.tokenValue;
-			out << "INTLIT:" << tok->value() << std::endl;	
+			out << "INTLIT:" << tok->value() << std::endl;
 			break;
 			}
 		case TokenTag::STRINGLITERAL:
 			{
 			StringLitToken * tok = (StringLitToken *)lexeme.tokenValue;
-			out << "STRINGLIT:" << tok->value() << std::endl;	
+			out << "STRINGLIT:" << tok->value() << std::endl;
 			break;
 			}
 		case TokenTag::LCURLY:
@@ -183,19 +183,19 @@ LILC::LilC_Compiler::parse( const char * const infile) {
 	std::cerr << "bad input stream " << infile << std::endl;
        exit( EXIT_FAILURE );
    }
-   
+
    delete(scanner);
    scanner = new LILC::LilC_Scanner( &in_stream );
-   delete(parser); 
+   delete(parser);
    delete(astRoot);
    try
    {
-      parser = new LILC::LilC_Parser( (*scanner) /* scanner */, 
+      parser = new LILC::LilC_Parser( (*scanner) /* scanner */,
                                   (*this) /* compiler */ );
    }
    catch( std::bad_alloc &ba )
    {
-      std::cerr << "Failed to allocate parser: (" << 
+      std::cerr << "Failed to allocate parser: (" <<
          ba.what() << "), exiting!!\n";
       exit( EXIT_FAILURE );
    }
@@ -214,9 +214,9 @@ bool LILC::LilC_Compiler::nameAnalysis(const char * const inF){
 }
 
 bool LILC::LilC_Compiler::typeAnalysis(const char * const inF){
-	if (!this->nameAnalysis(inF)){ 
+	if (!this->nameAnalysis(inF)){
 		std::cerr << "Failed nameAnalysis!" << std::endl;
-		return false; 
+		return false;
 	}
 	return this->astRoot->typeAnalysis();
 }

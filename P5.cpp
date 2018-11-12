@@ -7,7 +7,7 @@
 
 using namespace LILC;
 
-int 
+int
 main( const int argc, const char **argv )
 {
    if (argc != 3){
@@ -16,8 +16,11 @@ main( const int argc, const char **argv )
    }
 
    LILC::LilC_Compiler compiler;
-   if (!compiler.typeAnalysis(argv[1])){
+   if (compiler.typeAnalysis(argv[1])){
+     std::cout << "Passed type analysis\n";
+     compiler.unparse(argv[2]);
 	return 1;
    }
+   std::cout << "failed type analysis\n";
    return 0;
 }

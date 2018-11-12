@@ -100,15 +100,18 @@ private:
 
 class ExpNode : public ASTNode{
 public:
-	ExpNode(size_t line, size_t col) : ASTNode(line, col){ }
+	ExpNode(size_t line, size_t col) : ASTNode(line, col){myType = ""; }
 	virtual void unparse(std::ostream& out, int indent) = 0;
 	virtual bool nameAnalysis(SymbolTable * symTab) = 0;
 	virtual bool typeAnalysis() = 0;
+	virtual std::string getType() {return myType;}
 	virtual StructSymbol * dotNameAnalysis(SymbolTable * symTab){
 		throw runtime_error("INTERNAL: Attempted "
 			"dotNameAnalysis on a non-struct "
 			"expression type");
 	}
+protected:
+	std::string myType;
 };
 
 class IdNode : public ExpNode{
@@ -119,11 +122,14 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
-	bool typeAnalysis();
+	bool typeAnalysis() {return true;}
 	StructSymbol * dotNameAnalysis(
 		SymbolTable * symTab) override;
 	virtual std::string getString() { return myStrVal; }
 	virtual SymbolTableEntry * getSymbol() { return mySymbol; }
+	std::string getType() override {
+		return mySymbol->getTypeString();
+	}
 	void setSymbol(SymbolTableEntry * symbolIn){
 		this->mySymbol = symbolIn;
 	}
@@ -180,14 +186,14 @@ private:
 class ExpListNode : public ASTNode{
 public:
 	ExpListNode(std::list<ExpNode *> * exps) : ASTNode(0,0){
-		myExps = *exps;
+		myExps = exps;
 	}
 	void unparse(std::ostream& out, int indent);
 	virtual bool nameAnalysis(SymbolTable * symTab);
 	bool typeAnalysis();
 
 private:
-	std::list<ExpNode *> myExps;
+	std::list<ExpNode *> * myExps;
 };
 
 class StmtListNode : public ASTNode{
@@ -346,6 +352,7 @@ public:
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab) { return true; }
 	bool typeAnalysis() {return true;}
+	std::string getType() override {return "int";}
 	std::string getString() { return "" + myInt; }
 private:
 	int myInt;
@@ -360,6 +367,7 @@ public:
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab) { return true; }
 	bool typeAnalysis() {return true;}
+	std::string getType() override {return "string";}
 	std::string getString() const { return myString; }
 private:
 	 std::string myString;
@@ -372,6 +380,7 @@ public:
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab) { return true; }
 	bool typeAnalysis() {return true;}
+	std::string getType() override {return "bool";}
 	std::string getString() const { return "true"; }
 };
 
@@ -381,6 +390,7 @@ public:
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab) { return true; }
 	bool typeAnalysis() {return true;}
+	std::string getType() override {return "bool";}
 	std::string getString() const { return "false"; }
 };
 
@@ -393,6 +403,8 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab) override;
+	bool typeAnalysis() {return true;}
+	std::string getType() override {return myId->getType();}
 	StructSymbol * dotNameAnalysis(SymbolTable * symTab);
 	std::string getString();
 
@@ -413,9 +425,11 @@ public:
 	: ExpNode(line, col){
 		myExpLHS = expLHS;
 		myExpRHS = expRHS;
+		myType = "";
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis();
 
 private:
 	ExpNode * myExpLHS;
@@ -431,6 +445,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 
 private:
 	IdNode * myId;
@@ -448,6 +463,7 @@ public:
 	virtual bool nameAnalysis(SymbolTable * symTab){
 		return myExp->nameAnalysis(symTab);
 	}
+	bool typeAnalysis() {return true;}
 protected:
 	ExpNode * myExp;
 };
@@ -481,6 +497,7 @@ public:
 		return myExp2->nameAnalysis(symTab) && result1;
 	}
 	virtual std::string myOp() = 0;
+	bool typeAnalysis() {return true;}
 protected:
 	ExpNode * myExp1;
 	ExpNode * myExp2;
@@ -590,6 +607,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return myAssign->typeAnalysis();}
 
 private:
 	AssignNode * myAssign;
@@ -603,6 +621,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 
 private:
 	ExpNode * myExp;
@@ -616,6 +635,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 
 private:
 	ExpNode * myExp;
@@ -629,6 +649,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 private:
 	ExpNode * myExp;
 };
@@ -641,6 +662,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 private:
 	ExpNode * myExp;
 };
@@ -656,6 +678,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 private:
 	ExpNode * myExp;
 	DeclListNode * myDecls;
@@ -676,6 +699,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 private:
 	ExpNode * myExp;
 	DeclListNode * myDeclsT;
@@ -695,6 +719,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 private:
 	ExpNode * myExp;
 	DeclListNode * myDecls;
@@ -709,6 +734,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 
 private:
 	CallExpNode * myCallExp;
@@ -722,6 +748,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
+	bool typeAnalysis() {return true;}
 
 private:
 	ExpNode * myExp;
@@ -735,6 +762,7 @@ public:
 		mySize = size;
 	}
 	bool nameAnalysis(SymbolTable * symTab) override;
+	bool typeAnalysis() {return true;}
 	void unparse(std::ostream& out, int indent);
 	virtual std::string getTypeString() override;
 	virtual DeclKind getKind() override { return DeclKind::VAR; }
