@@ -89,6 +89,13 @@ bool AssignNode::typeAnalysis(){
 	return result;
 }
 
+bool PostIncStmtNode::typeAnalysis(){
+	bool result = myExp->typeAnalysis();
+	if (myExp->getType() != "int" && myExp->getType() != "") {
+		Err::nonArthimetic(getPosition());
+	}
+}
+
 /*
 * Creates a comma-separated string listing the types of formals.
 * This function mostly serves as a helper for
