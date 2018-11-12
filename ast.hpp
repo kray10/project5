@@ -497,7 +497,7 @@ public:
 		return myExp2->nameAnalysis(symTab) && result1;
 	}
 	virtual std::string myOp() = 0;
-	bool typeAnalysis() {return true;}
+virtual	bool typeAnalysis() {return true;}
 protected:
 	ExpNode * myExp1;
 	ExpNode * myExp2;
@@ -509,6 +509,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2) { }
 	virtual std::string myOp(){ return "+"; }
+	bool typeAnalysis() override;
 };
 
 class MinusNode : public BinaryExpNode{
@@ -621,7 +622,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
-	bool typeAnalysis() {return true;}
+	bool typeAnalysis();
 
 private:
 	ExpNode * myExp;

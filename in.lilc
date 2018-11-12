@@ -1,5 +1,4 @@
 int main() {
   int a;
-  a = true;
+  a = 1 + true;
 }
-

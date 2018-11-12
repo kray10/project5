@@ -43,6 +43,10 @@ class Err{
 	static bool typeMismatch(std::string pos) {
 		report(pos, "Type mismatch");
 	}
+
+	static bool nonArthimetic(std::string pos) {
+		report (pos, "Arithmetic operator applied to non-numeric operand");
+	}
 };
 
 } //End namespace LILC
