@@ -1,7 +1,13 @@
+struct s {
+  int b;
+};
 
+int f(int a, bool b) {
+}
 
 int main() {
   int a;
+  bool b;
   struct s c;
-  output << a;
+  output << f(b, a);
 }

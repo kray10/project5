@@ -80,6 +80,18 @@ class Err{
 	static bool writeVoidResult(std::string pos) {
 		report (pos, "Attempt to write void");
 	}
+
+	static bool callNonFunction(std::string pos) {
+		report(pos, "Attempt to call a non-function");
+	}
+
+	static bool callFunctionWrongNumArgs(std::string pos) {
+		report(pos, "Function call with wrong number of args");
+	}
+
+	static bool actualNotMatchingFormal(std::string pos) {
+		report(pos, "Type of actual does not match type of formal");
+	}
 };
 
 } //End namespace LILC

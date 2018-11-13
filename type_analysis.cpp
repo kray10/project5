@@ -37,6 +37,25 @@ bool FormalsListNode::typeAnalysis(){
 	return result;
 }
 
+bool ExpListNode::checkTypes(std::list<std::string*>* expectedTypes) {
+	if (expectedTypes->size() != myExps->size()) {
+		return false;
+	}
+	std::list<string*>::iterator it1 = expectedTypes->begin();
+	std::list<ExpNode*>::iterator it2 = myExps->begin();
+	bool result = true;
+	for (; it1 != expectedTypes->end() && it2 != myExps->end();
+				++it1, ++ it2) {
+		std::string* eType = *it1;
+		ExpNode* elt = *it2;
+		if (*eType != elt->getType()) {
+			result = false;
+			Err::actualNotMatchingFormal(elt->getPosition());
+		}
+	}
+	return result;
+}
+
 bool ExpListNode::typeAnalysis(){
 	bool result = true;
 	for (std::list<ExpNode *>::iterator
@@ -91,6 +110,42 @@ bool AssignNode::typeAnalysis(){
 
 bool CallExpNode::typeAnalysis() {
 	bool result = myExpList->typeAnalysis();
+	std::string expType = myId->getType();
+
+	if (expType.find("->") == std::string::npos) {
+		Err::callNonFunction(getPosition());
+		return false;
+	}
+
+	std::list<std::string*>* typeList = new std::list<std::string*>();
+	std::string* type = new std::string("");
+	bool reachedMyTpe = false;
+	for (char c : expType) {
+		if (!reachedMyTpe) {
+			if (c == '-') {
+				typeList->push_back(type);
+				type = new std::string("");
+			} else if (c == ',') {
+				typeList->push_back(type);
+				type = new std::string("");
+			} else if (c == '>') {
+				reachedMyTpe = true;
+			} else {
+				*type += c;
+			}
+		} else {
+			*type += c;
+		}
+	}
+	myType = *type;
+
+	if (myExpList->listSize() != typeList->size()) {
+		Err::callFunctionWrongNumArgs(getPosition());
+		return false;
+	}
+
+	result = myExpList->checkTypes(typeList) && result;
+
 	// need to check that each expression is of the right type
 	return result;
 }

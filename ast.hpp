@@ -191,6 +191,8 @@ public:
 	void unparse(std::ostream& out, int indent);
 	virtual bool nameAnalysis(SymbolTable * symTab);
 	bool typeAnalysis();
+	bool checkTypes(std::list<std::string*>* expectedTypes);
+	int listSize() {return myExps->size();}
 
 private:
 	std::list<ExpNode *> * myExps;
