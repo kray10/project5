@@ -1,4 +1,9 @@
+struct s {
+  int b;
+};
+
 int main() {
   int a;
-  a = 1 + true;
+  struct s c;
+  input >> s;
 }

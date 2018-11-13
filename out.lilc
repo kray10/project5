@@ -1,5 +1,10 @@
+struct s
+{
+    int b;
+};
 int main()
 {
     int a;
-    a(int) = (1+1);
+    struct s c;
+    output >> s(struct);
 }

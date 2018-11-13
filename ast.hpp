@@ -650,7 +650,7 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
-	bool typeAnalysis() {return true;}
+	bool typeAnalysis();
 private:
 	ExpNode * myExp;
 };

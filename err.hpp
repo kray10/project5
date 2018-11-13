@@ -47,6 +47,18 @@ class Err{
 	static bool nonArthimetic(std::string pos) {
 		report (pos, "Arithmetic operator applied to non-numeric operand");
 	}
+
+	static bool readFunction(std::string pos) {
+		report(pos, "Attempt to read a function");
+	}
+
+	static bool readStructName(std::string pos) {
+		report (pos, "Attempt to read a struct name");
+	}
+
+	static bool readStructVar(std::string pos) {
+		report(pos, "Attempt to read a struct variable");
+	}
 };
 
 } //End namespace LILC
