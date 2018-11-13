@@ -96,6 +96,37 @@ class Err{
 	static bool nonBoolInIf(std::string pos) {
 		report(pos, "Non-bool expression used as an if condition");
 	}
+
+	static bool nonBoolInWhile(std::string pos) {
+		report(pos, "Non-bool expression used as a while condition");
+	}
+	static bool equalOnVoid(std::string pos) {
+		report(pos, "Equality operator applied to void functions");
+	}
+	static bool equalOnFunction(std::string pos) {
+		report(pos, "Equality operator applied to functions");
+	}
+
+	static bool equalOnStructName(std::string pos) {
+		report(pos, "Equality operator applied to struct names");
+	}
+
+	static bool equalOnStructVar(std::string pos) {
+		report(pos, "Equality operator applied to struct variables");
+	}
+
+	static bool assignFunc(std::string pos) {
+		report(pos, "Function assignment");
+	}
+
+	static bool assignStructName(std::string pos) {
+		report(pos, "Struct name assignment");
+	}
+
+	static bool assignStructVar(std::string pos) {
+		report(pos, "Struct variable assignment");
+	}
+
 };
 
 } //End namespace LILC

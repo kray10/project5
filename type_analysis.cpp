@@ -101,12 +101,29 @@ bool StructDeclNode::typeAnalysis(){
 }
 
 bool AssignNode::typeAnalysis(){
-	bool result = myExpLHS->typeAnalysis() && myExpRHS->typeAnalysis();
-	if (myExpLHS->getType() != myExpRHS->getType() && result) {
-		Err::typeMismatch(myExpLHS->getPosition());
-		result = false;
-	} else if (myExpLHS->getType() == myExpRHS->getType()) {
-		myType = myExpLHS->getType();
+	bool result = myExpLHS->typeAnalysis();
+	result = myExpRHS->typeAnalysis() && result;
+	std::string typeL = myExpLHS->getType();
+	std::string typeR = myExpRHS->getType();
+
+	if (typeL != "" && typeR != "") {
+		if (typeL != typeR) {
+			Err::typeMismatch(myExpLHS->getPosition());
+			result = false;
+		} else {
+			if (typeR.find("->") != std::string::npos) {
+				Err::assignFunc(myExpLHS->getPosition());
+				result = false;
+			} else if (typeR == "struct") {
+				Err::assignStructName(myExpLHS->getPosition());
+				result = false;
+			} else if (typeR != "int" && typeR != "bool") {
+				Err::assignStructVar(myExpLHS->getPosition());
+				result = false;
+			} else {
+				myType = typeR;
+			}
+		}
 	}
 	return result;
 }
@@ -270,6 +287,74 @@ bool OrNode::typeAnalysis(){
 	return result;
 }
 
+bool EqualsNode::typeAnalysis() {
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
+	std::string type1 = myExp1->getType();
+	std::string type2 = myExp2->getType();
+	if (type1 != "" && type2 != "") {
+		myType = "bool";
+		if (type1 != type2) {
+			Err::typeMismatch(myExp1->getPosition());
+			result = false;
+			myType = "";
+		} else {
+			if (type1 == "void") {
+				Err::equalOnVoid(myExp1->getPosition());
+				result = false;
+				myType = "";
+			} else if (type1.find("->") != std::string::npos) {
+				Err::equalOnFunction(myExp1->getPosition());
+				result = false;
+				myType = "";
+			} else if (type1 == "struct") {
+				Err::equalOnStructName(myExp1->getPosition());
+				result = false;
+				myType = "";
+			} else if (type1 != "int" && type1 != "bool") {
+				Err::equalOnStructVar(myExp1->getPosition());
+				result = false;
+				myType = "";
+			}
+		}
+	}
+	return result;
+}
+
+bool NotEqualsNode::typeAnalysis() {
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
+	std::string type1 = myExp1->getType();
+	std::string type2 = myExp2->getType();
+	if (type1 != "" && type2 != "") {
+		myType = "bool";
+		if (type1 != type2) {
+			Err::typeMismatch(myExp1->getPosition());
+			result = false;
+			myType = "";
+		} else {
+			if (type1 == "void") {
+				Err::equalOnVoid(myExp1->getPosition());
+				result = false;
+				myType = "";
+			} else if (type1.find("->") != std::string::npos) {
+				Err::equalOnFunction(myExp1->getPosition());
+				result = false;
+				myType = "";
+			} else if (type1 == "struct") {
+				Err::equalOnStructName(myExp1->getPosition());
+				result = false;
+				myType = "";
+			} else if (type1 != "int" && type1 != "bool") {
+				Err::equalOnStructVar(myExp1->getPosition());
+				result = false;
+				myType = "";
+			}
+		}
+	}
+	return result;
+}
+
 bool LessNode::typeAnalysis(){
 	bool result = myExp1->typeAnalysis();
 	result = myExp2->typeAnalysis() && result;
@@ -409,6 +494,31 @@ bool IfStmtNode::typeAnalysis() {
 	result = myStmts->typeAnalysis() && result;
 	if (myExp->getType() != "bool" && myExp->getType() != "") {
 		Err::nonBoolInIf(myExp->getPosition());
+		result = false;
+	}
+	return result;
+}
+
+bool IfElseStmtNode::typeAnalysis() {
+	bool result = myExp->typeAnalysis();
+	result = myDeclsT->typeAnalysis() && result;
+	result = myStmtsT->typeAnalysis() && result;
+	result = myDeclsF->typeAnalysis() && result;
+	result = myStmtsF->typeAnalysis() && result;
+
+	if (myExp->getType() != "bool" && myExp->getType() != "") {
+		Err::nonBoolInIf(myExp->getPosition());
+		result = false;
+	}
+	return result;
+}
+
+bool WhileStmtNode::typeAnalysis() {
+	bool result = myExp->typeAnalysis();
+	result = myDecls->typeAnalysis() && result;
+	result = myStmts->typeAnalysis() && result;
+	if (myExp->getType() != "bool" && myExp->getType() != "") {
+		Err::nonBoolInWhile(myExp->getPosition());
 		result = false;
 	}
 	return result;
