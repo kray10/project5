@@ -32,7 +32,7 @@ bool FormalsListNode::typeAnalysis(){
 		it=myFormals->begin();
 		it != myFormals->end(); ++it){
 	    FormalDeclNode * elt = *it;
-	    result = result && elt->typeAnalysis();
+	    result = elt->typeAnalysis() && result;
 	}
 	return result;
 }
@@ -62,7 +62,7 @@ bool ExpListNode::typeAnalysis(){
 		it=myExps->begin();
 		it != myExps->end(); ++it){
 	    ExpNode * elt = *it;
-	    result = result && elt->typeAnalysis();
+	    result = elt->typeAnalysis() && result;
 	}
 	return result;
 }
@@ -73,20 +73,23 @@ bool StmtListNode::typeAnalysis(){
 		it=myStmts->begin();
 		it != myStmts->end(); ++it){
 	    StmtNode * elt = *it;
-	    result = result && elt->typeAnalysis();
+	    result = elt->typeAnalysis() && result;
 	}
 	return result;
 }
 
 bool FnBodyNode::typeAnalysis(){
-	return (myDeclList->typeAnalysis() && myStmtList->typeAnalysis());
+	bool result = myDeclList->typeAnalysis();
+	result = myStmtList->typeAnalysis() && result;
+	return result;
 }
 
 bool FnDeclNode::typeAnalysis(){
-	return (myRetType->typeAnalysis()
-					&& myId->typeAnalysis()
-					&& myFormals->typeAnalysis()
-					&& myBody->typeAnalysis());
+	bool result = myRetType->typeAnalysis();
+	result = myId->typeAnalysis() && result;
+	result = myFormals->typeAnalysis() && result;
+	result = myBody->typeAnalysis() && result;
+	return result;
 }
 
 bool FormalDeclNode::typeAnalysis(){
@@ -111,6 +114,10 @@ bool AssignNode::typeAnalysis(){
 bool CallExpNode::typeAnalysis() {
 	bool result = myExpList->typeAnalysis();
 	std::string expType = myId->getType();
+
+	if (expType == "") {
+		return false;
+	}
 
 	if (expType.find("->") == std::string::npos) {
 		Err::callNonFunction(getPosition());
@@ -151,7 +158,8 @@ bool CallExpNode::typeAnalysis() {
 }
 
 bool PlusNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "int";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
@@ -169,7 +177,8 @@ bool PlusNode::typeAnalysis(){
 }
 
 bool MinusNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "int";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
@@ -187,7 +196,8 @@ bool MinusNode::typeAnalysis(){
 }
 
 bool TimesNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "int";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
@@ -204,7 +214,8 @@ bool TimesNode::typeAnalysis(){
 	return result;
 }
 bool DivideNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "int";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
@@ -222,7 +233,8 @@ bool DivideNode::typeAnalysis(){
 }
 
 bool AndNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "bool";
 	if(myExp1->getType() != "bool" && myExp1->getType() != "")
 	{
@@ -240,7 +252,8 @@ bool AndNode::typeAnalysis(){
 }
 
 bool OrNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "bool";
 	if(myExp1->getType() != "bool" && myExp1->getType() != "")
 	{
@@ -258,7 +271,8 @@ bool OrNode::typeAnalysis(){
 }
 
 bool LessNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "bool";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
@@ -276,7 +290,8 @@ bool LessNode::typeAnalysis(){
 }
 
 bool GreaterNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "bool";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
@@ -294,7 +309,8 @@ bool GreaterNode::typeAnalysis(){
 }
 
 bool LessEqNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "bool";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
@@ -312,7 +328,8 @@ bool LessEqNode::typeAnalysis(){
 }
 
 bool GreaterEqNode::typeAnalysis(){
-	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	bool result = myExp1->typeAnalysis();
+	result = myExp2->typeAnalysis() && result;
 	myType = "bool";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
@@ -382,6 +399,17 @@ bool WriteStmtNode::typeAnalysis() {
 			Err::writeStructVar(myExp->getPosition());
 			result = false;
 		}
+	}
+	return result;
+}
+
+bool IfStmtNode::typeAnalysis() {
+	bool result = myExp->typeAnalysis();
+	result = myDecls->typeAnalysis() && result;
+	result = myStmts->typeAnalysis() && result;
+	if (myExp->getType() != "bool" && myExp->getType() != "") {
+		Err::nonBoolInIf(myExp->getPosition());
+		result = false;
 	}
 	return result;
 }

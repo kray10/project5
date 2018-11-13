@@ -92,6 +92,10 @@ class Err{
 	static bool actualNotMatchingFormal(std::string pos) {
 		report(pos, "Type of actual does not match type of formal");
 	}
+
+	static bool nonBoolInIf(std::string pos) {
+		report(pos, "Non-bool expression used as an if condition");
+	}
 };
 
 } //End namespace LILC
