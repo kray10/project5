@@ -272,7 +272,36 @@ bool PostIncStmtNode::typeAnalysis(){
 	bool result = myExp->typeAnalysis();
 	if (myExp->getType() != "int" && myExp->getType() != "") {
 		Err::nonArthimetic(getPosition());
+		result = false;
 	}
+	return false;
+}
+
+bool PostDecStmtNode::typeAnalysis(){
+	bool result = myExp->typeAnalysis();
+	if (myExp->getType() != "int" && myExp->getType() != "") {
+		Err::nonArthimetic(getPosition());
+		result = false;
+	}
+	return false;
+}
+
+bool ReadStmtNode::typeAnalysis() {
+	bool result = myExp->typeAnalysis();
+	std::string expType = myExp->getType();
+	if (expType != "int" || expType != "string" || expType != "bool") {
+		if (expType.find("->") != std::string::npos) {
+			Err::readFunction(myExp->getPosition());
+			result = false;
+		} else if (expType == "struct") {
+			Err::readStructName(myExp->getPosition());
+			result = false;
+		} else {
+			Err::readStructVar(myExp->getPosition());
+			result = false;
+		}
+	}
+	return result;
 }
 
 /*

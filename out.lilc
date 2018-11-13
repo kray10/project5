@@ -1,9 +1,0 @@
-int main()
-{
-    int a;
-    bool b;
-    b(bool) = (1<2);
-    b(bool) = (5>2);
-    b(bool) = (1<=2);
-    b(bool) = (1>=2);
-}
