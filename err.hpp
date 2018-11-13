@@ -47,6 +47,12 @@ class Err{
 	static bool nonArthimetic(std::string pos) {
 		report (pos, "Arithmetic operator applied to non-numeric operand");
 	}
+	static bool nonLogical(std::string pos) {
+		report (pos, "Logical operator applied to non-bool operand");
+	}
+	static bool nonRelational(std::string pos) {
+		report (pos, "Relational operator applied to non-numeric operand");
+	}
 };
 
 } //End namespace LILC

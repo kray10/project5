@@ -107,6 +107,167 @@ bool PlusNode::typeAnalysis(){
 	return result;
 }
 
+bool MinusNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "int";
+	if(myExp1->getType() != "int" && myExp1->getType() != "")
+	{
+		Err::nonArthimetic(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "int" && myExp2->getType() != "")
+	{
+		Err::nonArthimetic(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
+bool TimesNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "int";
+	if(myExp1->getType() != "int" && myExp1->getType() != "")
+	{
+		Err::nonArthimetic(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "int" && myExp2->getType() != "")
+	{
+		Err::nonArthimetic(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+bool DivideNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "int";
+	if(myExp1->getType() != "int" && myExp1->getType() != "")
+	{
+		Err::nonArthimetic(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "int" && myExp2->getType() != "")
+	{
+		Err::nonArthimetic(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
+bool AndNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "bool";
+	if(myExp1->getType() != "bool" && myExp1->getType() != "")
+	{
+		Err::nonLogical(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "bool" && myExp2->getType() != "")
+	{
+		Err::nonLogical(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
+bool OrNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "bool";
+	if(myExp1->getType() != "bool" && myExp1->getType() != "")
+	{
+		Err::nonLogical(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "bool" && myExp2->getType() != "")
+	{
+		Err::nonLogical(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
+bool LessNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "bool";
+	if(myExp1->getType() != "int" && myExp1->getType() != "")
+	{
+		Err::nonRelational(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "int" && myExp2->getType() != "")
+	{
+		Err::nonRelational(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
+bool GreaterNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "bool";
+	if(myExp1->getType() != "int" && myExp1->getType() != "")
+	{
+		Err::nonRelational(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "int" && myExp2->getType() != "")
+	{
+		Err::nonRelational(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
+bool LessEqNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "bool";
+	if(myExp1->getType() != "int" && myExp1->getType() != "")
+	{
+		Err::nonRelational(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "int" && myExp2->getType() != "")
+	{
+		Err::nonRelational(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
+bool GreaterEqNode::typeAnalysis(){
+	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
+	myType = "bool";
+	if(myExp1->getType() != "int" && myExp1->getType() != "")
+	{
+		Err::nonRelational(myExp1->getPosition());
+		result = false;
+		myType = "";
+	}
+	if(myExp2->getType() != "int" && myExp2->getType() != "")
+	{
+		Err::nonRelational(myExp2->getPosition());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
 bool PostIncStmtNode::typeAnalysis(){
 	bool result = myExp->typeAnalysis();
 	if (myExp->getType() != "int" && myExp->getType() != "") {
