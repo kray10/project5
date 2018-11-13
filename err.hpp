@@ -59,6 +59,22 @@ class Err{
 	static bool readStructVar(std::string pos) {
 		report(pos, "Attempt to read a struct variable");
 	}
+
+	static bool writeFunction(std::string pos) {
+		report (pos, "Attempt to write a function");
+	}
+
+	static bool writeStructName(std::string pos) {
+		report (pos, "Attempt to write a struct name");
+	}
+
+	static bool writeStructVar(std::string pos) {
+		report (pos, "Attempt to write a struct variable");
+	}
+
+	static bool writeVoidResult(std::string pos) {
+		report (pos, "Attempt to write void");
+	}
 };
 
 } //End namespace LILC

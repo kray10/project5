@@ -89,6 +89,12 @@ bool AssignNode::typeAnalysis(){
 	return result;
 }
 
+bool CallExpNode::typeAnalysis() {
+	bool result = myExpList->typeAnalysis();
+	// need to check that each expression is of the right type
+	return result;
+}
+
 bool PlusNode::typeAnalysis(){
 	bool result = myExp1->typeAnalysis() && myExp2->typeAnalysis();
 	myType = "int";
@@ -128,7 +134,7 @@ bool PostDecStmtNode::typeAnalysis(){
 bool ReadStmtNode::typeAnalysis() {
 	bool result = myExp->typeAnalysis();
 	std::string expType = myExp->getType();
-	if (expType != "int" || expType != "string" || expType != "bool") {
+	if (expType != "int" && expType != "bool" && expType != "") {
 		if (expType.find("->") != std::string::npos) {
 			Err::readFunction(myExp->getPosition());
 			result = false;
@@ -137,6 +143,27 @@ bool ReadStmtNode::typeAnalysis() {
 			result = false;
 		} else {
 			Err::readStructVar(myExp->getPosition());
+			result = false;
+		}
+	}
+	return result;
+}
+
+bool WriteStmtNode::typeAnalysis() {
+	bool result = myExp->typeAnalysis();
+	std::string expType = myExp->getType();
+	if (expType != "int" && expType != "string" && expType != "bool" && expType != "") {
+		if (expType.find("->") != std::string::npos) {
+			Err::writeFunction(myExp->getPosition());
+			result = false;
+		} else if (expType == "struct") {
+			Err::writeStructName(myExp->getPosition());
+			result = false;
+		} else if (expType == "void") {
+			Err::writeVoidResult(myExp->getPosition());
+			result = false;
+		} else {
+			Err::writeStructVar(myExp->getPosition());
 			result = false;
 		}
 	}
