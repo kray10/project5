@@ -518,6 +518,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2){ }
 	virtual std::string myOp(){ return "-"; }
+	bool typeAnalysis() override;
 };
 
 class TimesNode : public BinaryExpNode{
@@ -526,6 +527,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2){ }
 	virtual std::string myOp(){ return "*"; }
+	bool typeAnalysis() override;
 };
 
 class DivideNode : public BinaryExpNode{
@@ -534,6 +536,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2){ }
 	virtual std::string myOp(){ return "/"; }
+	bool typeAnalysis() override;
 };
 
 class AndNode : public BinaryExpNode{
@@ -542,6 +545,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2){ }
 	virtual std::string myOp(){ return "&&"; }
+	bool typeAnalysis() override;
 };
 
 class OrNode : public BinaryExpNode{
@@ -550,6 +554,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2){ }
 	virtual std::string myOp() override { return "||"; }
+	bool typeAnalysis() override;
 };
 
 class EqualsNode : public BinaryExpNode{
@@ -574,6 +579,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2){ }
 	virtual std::string myOp() override { return "<"; }
+	bool typeAnalysis() override;
 };
 
 class GreaterNode : public BinaryExpNode{
@@ -582,6 +588,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2){ }
 	virtual std::string myOp() override { return ">"; }
+	bool typeAnalysis() override;
 };
 
 class LessEqNode : public BinaryExpNode{
@@ -590,6 +597,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2){ }
 	virtual std::string myOp() override { return "<="; }
+	bool typeAnalysis() override;
 };
 
 class GreaterEqNode : public BinaryExpNode{
@@ -598,6 +606,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(line, col, exp1, exp2){ }
 	virtual std::string myOp() override { return ">="; }
+	bool typeAnalysis() override;
 };
 
 class AssignStmtNode : public StmtNode{

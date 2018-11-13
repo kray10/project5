@@ -1,13 +1,7 @@
-struct s {
-  int b;
-};
 
-void f() {
-
-}
 
 int main() {
   int a;
   struct s c;
-  output << f();
+  output << a;
 }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 struct s
 {
     int b;
@@ -11,3 +12,5 @@ int main()
     struct s c;
     input << f(->void)();
 }
+=======
+>>>>>>> 5489fc96946c6c8c769ef54221b2a8004aba2d88
