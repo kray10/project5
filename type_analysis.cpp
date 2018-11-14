@@ -50,7 +50,7 @@ bool ExpListNode::checkTypes(std::list<std::string*>* expectedTypes) {
 		ExpNode* elt = *it2;
 		if (*eType != elt->getType()) {
 			result = false;
-			Err::actualNotMatchingFormal(elt->getPosition());
+			Err::actualNotMatchingFormal(elt->getAssignPos());
 		}
 	}
 	return result;
@@ -108,17 +108,17 @@ bool AssignNode::typeAnalysis(){
 
 	if (typeL != "" && typeR != "") {
 		if (typeL != typeR) {
-			Err::typeMismatch(myExpLHS->getPosition());
+			Err::typeMismatch(myExpLHS->getAssignPos());
 			result = false;
 		} else {
 			if (typeR.find("->") != std::string::npos) {
-				Err::assignFunc(myExpLHS->getPosition());
+				Err::assignFunc(myExpLHS->getAssignPos());
 				result = false;
 			} else if (typeR == "struct") {
-				Err::assignStructName(myExpLHS->getPosition());
+				Err::assignStructName(myExpLHS->getAssignPos());
 				result = false;
 			} else if (typeR != "int" && typeR != "bool") {
-				Err::assignStructVar(myExpLHS->getPosition());
+				Err::assignStructVar(myExpLHS->getAssignPos());
 				result = false;
 			} else {
 				myType = typeR;
@@ -137,7 +137,7 @@ bool CallExpNode::typeAnalysis() {
 	}
 
 	if (expType.find("->") == std::string::npos) {
-		Err::callNonFunction(getPosition());
+		Err::callNonFunction(getAssignPos());
 		return false;
 	}
 
@@ -164,7 +164,7 @@ bool CallExpNode::typeAnalysis() {
 	myType = *type;
 
 	if (myExpList->listSize() != typeList->size()) {
-		Err::callFunctionWrongNumArgs(getPosition());
+		Err::callFunctionWrongNumArgs(getAssignPos());
 		return false;
 	}
 
@@ -174,19 +174,43 @@ bool CallExpNode::typeAnalysis() {
 	return result;
 }
 
+bool UnaryMinusNode::typeAnalysis() {
+	bool result = myExp->typeAnalysis();
+	myType = "int";
+	if (myExp->getType() != "int" && myExp->getType() != "") {
+		Err::nonArthimetic(myExp->getAssignPos());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
+bool NotNode::typeAnalysis() {
+	bool result = myExp->typeAnalysis();
+	myType = "bool";
+	if (myExp->getType() != "bool" && myExp->getType() != "") {
+		Err::nonLogical(myExp->getAssignPos());
+		result = false;
+		myType = "";
+	}
+	return result;
+}
+
+
+
 bool PlusNode::typeAnalysis(){
 	bool result = myExp1->typeAnalysis();
 	result = myExp2->typeAnalysis() && result;
 	myType = "int";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
-		Err::nonArthimetic(myExp1->getPosition());
+		Err::nonArthimetic(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "int" && myExp2->getType() != "")
 	{
-		Err::nonArthimetic(myExp2->getPosition());
+		Err::nonArthimetic(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -199,13 +223,13 @@ bool MinusNode::typeAnalysis(){
 	myType = "int";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
-		Err::nonArthimetic(myExp1->getPosition());
+		Err::nonArthimetic(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "int" && myExp2->getType() != "")
 	{
-		Err::nonArthimetic(myExp2->getPosition());
+		Err::nonArthimetic(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -218,13 +242,13 @@ bool TimesNode::typeAnalysis(){
 	myType = "int";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
-		Err::nonArthimetic(myExp1->getPosition());
+		Err::nonArthimetic(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "int" && myExp2->getType() != "")
 	{
-		Err::nonArthimetic(myExp2->getPosition());
+		Err::nonArthimetic(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -236,13 +260,13 @@ bool DivideNode::typeAnalysis(){
 	myType = "int";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
-		Err::nonArthimetic(myExp1->getPosition());
+		Err::nonArthimetic(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "int" && myExp2->getType() != "")
 	{
-		Err::nonArthimetic(myExp2->getPosition());
+		Err::nonArthimetic(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -255,13 +279,13 @@ bool AndNode::typeAnalysis(){
 	myType = "bool";
 	if(myExp1->getType() != "bool" && myExp1->getType() != "")
 	{
-		Err::nonLogical(myExp1->getPosition());
+		Err::nonLogical(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "bool" && myExp2->getType() != "")
 	{
-		Err::nonLogical(myExp2->getPosition());
+		Err::nonLogical(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -274,13 +298,13 @@ bool OrNode::typeAnalysis(){
 	myType = "bool";
 	if(myExp1->getType() != "bool" && myExp1->getType() != "")
 	{
-		Err::nonLogical(myExp1->getPosition());
+		Err::nonLogical(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "bool" && myExp2->getType() != "")
 	{
-		Err::nonLogical(myExp2->getPosition());
+		Err::nonLogical(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -295,24 +319,24 @@ bool EqualsNode::typeAnalysis() {
 	if (type1 != "" && type2 != "") {
 		myType = "bool";
 		if (type1 != type2) {
-			Err::typeMismatch(myExp1->getPosition());
+			Err::typeMismatch(myExp1->getAssignPos());
 			result = false;
 			myType = "";
 		} else {
 			if (type1 == "void") {
-				Err::equalOnVoid(myExp1->getPosition());
+				Err::equalOnVoid(myExp1->getAssignPos());
 				result = false;
 				myType = "";
 			} else if (type1.find("->") != std::string::npos) {
-				Err::equalOnFunction(myExp1->getPosition());
+				Err::equalOnFunction(myExp1->getAssignPos());
 				result = false;
 				myType = "";
 			} else if (type1 == "struct") {
-				Err::equalOnStructName(myExp1->getPosition());
+				Err::equalOnStructName(myExp1->getAssignPos());
 				result = false;
 				myType = "";
 			} else if (type1 != "int" && type1 != "bool") {
-				Err::equalOnStructVar(myExp1->getPosition());
+				Err::equalOnStructVar(myExp1->getAssignPos());
 				result = false;
 				myType = "";
 			}
@@ -329,24 +353,24 @@ bool NotEqualsNode::typeAnalysis() {
 	if (type1 != "" && type2 != "") {
 		myType = "bool";
 		if (type1 != type2) {
-			Err::typeMismatch(myExp1->getPosition());
+			Err::typeMismatch(myExp1->getAssignPos());
 			result = false;
 			myType = "";
 		} else {
 			if (type1 == "void") {
-				Err::equalOnVoid(myExp1->getPosition());
+				Err::equalOnVoid(myExp1->getAssignPos());
 				result = false;
 				myType = "";
 			} else if (type1.find("->") != std::string::npos) {
-				Err::equalOnFunction(myExp1->getPosition());
+				Err::equalOnFunction(myExp1->getAssignPos());
 				result = false;
 				myType = "";
 			} else if (type1 == "struct") {
-				Err::equalOnStructName(myExp1->getPosition());
+				Err::equalOnStructName(myExp1->getAssignPos());
 				result = false;
 				myType = "";
 			} else if (type1 != "int" && type1 != "bool") {
-				Err::equalOnStructVar(myExp1->getPosition());
+				Err::equalOnStructVar(myExp1->getAssignPos());
 				result = false;
 				myType = "";
 			}
@@ -361,13 +385,13 @@ bool LessNode::typeAnalysis(){
 	myType = "bool";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
-		Err::nonRelational(myExp1->getPosition());
+		Err::nonRelational(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "int" && myExp2->getType() != "")
 	{
-		Err::nonRelational(myExp2->getPosition());
+		Err::nonRelational(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -380,13 +404,13 @@ bool GreaterNode::typeAnalysis(){
 	myType = "bool";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
-		Err::nonRelational(myExp1->getPosition());
+		Err::nonRelational(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "int" && myExp2->getType() != "")
 	{
-		Err::nonRelational(myExp2->getPosition());
+		Err::nonRelational(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -399,13 +423,13 @@ bool LessEqNode::typeAnalysis(){
 	myType = "bool";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
-		Err::nonRelational(myExp1->getPosition());
+		Err::nonRelational(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "int" && myExp2->getType() != "")
 	{
-		Err::nonRelational(myExp2->getPosition());
+		Err::nonRelational(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -418,13 +442,13 @@ bool GreaterEqNode::typeAnalysis(){
 	myType = "bool";
 	if(myExp1->getType() != "int" && myExp1->getType() != "")
 	{
-		Err::nonRelational(myExp1->getPosition());
+		Err::nonRelational(myExp1->getAssignPos());
 		result = false;
 		myType = "";
 	}
 	if(myExp2->getType() != "int" && myExp2->getType() != "")
 	{
-		Err::nonRelational(myExp2->getPosition());
+		Err::nonRelational(myExp2->getAssignPos());
 		result = false;
 		myType = "";
 	}
@@ -434,7 +458,7 @@ bool GreaterEqNode::typeAnalysis(){
 bool PostIncStmtNode::typeAnalysis(){
 	bool result = myExp->typeAnalysis();
 	if (myExp->getType() != "int" && myExp->getType() != "") {
-		Err::nonArthimetic(getPosition());
+		Err::nonArthimetic(getAssignPos());
 		result = false;
 	}
 	return false;
@@ -443,7 +467,7 @@ bool PostIncStmtNode::typeAnalysis(){
 bool PostDecStmtNode::typeAnalysis(){
 	bool result = myExp->typeAnalysis();
 	if (myExp->getType() != "int" && myExp->getType() != "") {
-		Err::nonArthimetic(getPosition());
+		Err::nonArthimetic(getAssignPos());
 		result = false;
 	}
 	return false;
@@ -454,13 +478,13 @@ bool ReadStmtNode::typeAnalysis() {
 	std::string expType = myExp->getType();
 	if (expType != "int" && expType != "bool" && expType != "") {
 		if (expType.find("->") != std::string::npos) {
-			Err::readFunction(myExp->getPosition());
+			Err::readFunction(myExp->getAssignPos());
 			result = false;
 		} else if (expType == "struct") {
-			Err::readStructName(myExp->getPosition());
+			Err::readStructName(myExp->getAssignPos());
 			result = false;
 		} else {
-			Err::readStructVar(myExp->getPosition());
+			Err::readStructVar(myExp->getAssignPos());
 			result = false;
 		}
 	}
@@ -472,16 +496,16 @@ bool WriteStmtNode::typeAnalysis() {
 	std::string expType = myExp->getType();
 	if (expType != "int" && expType != "string" && expType != "bool" && expType != "") {
 		if (expType.find("->") != std::string::npos) {
-			Err::writeFunction(myExp->getPosition());
+			Err::writeFunction(myExp->getAssignPos());
 			result = false;
 		} else if (expType == "struct") {
-			Err::writeStructName(myExp->getPosition());
+			Err::writeStructName(myExp->getAssignPos());
 			result = false;
 		} else if (expType == "void") {
-			Err::writeVoidResult(myExp->getPosition());
+			Err::writeVoidResult(myExp->getAssignPos());
 			result = false;
 		} else {
-			Err::writeStructVar(myExp->getPosition());
+			Err::writeStructVar(myExp->getAssignPos());
 			result = false;
 		}
 	}
@@ -493,7 +517,7 @@ bool IfStmtNode::typeAnalysis() {
 	result = myDecls->typeAnalysis() && result;
 	result = myStmts->typeAnalysis() && result;
 	if (myExp->getType() != "bool" && myExp->getType() != "") {
-		Err::nonBoolInIf(myExp->getPosition());
+		Err::nonBoolInIf(myExp->getAssignPos());
 		result = false;
 	}
 	return result;
@@ -507,7 +531,7 @@ bool IfElseStmtNode::typeAnalysis() {
 	result = myStmtsF->typeAnalysis() && result;
 
 	if (myExp->getType() != "bool" && myExp->getType() != "") {
-		Err::nonBoolInIf(myExp->getPosition());
+		Err::nonBoolInIf(myExp->getAssignPos());
 		result = false;
 	}
 	return result;
@@ -518,7 +542,7 @@ bool WhileStmtNode::typeAnalysis() {
 	result = myDecls->typeAnalysis() && result;
 	result = myStmts->typeAnalysis() && result;
 	if (myExp->getType() != "bool" && myExp->getType() != "") {
-		Err::nonBoolInWhile(myExp->getPosition());
+		Err::nonBoolInWhile(myExp->getAssignPos());
 		result = false;
 	}
 	return result;

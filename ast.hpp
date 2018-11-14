@@ -48,6 +48,7 @@ public:
 		//res += std::string(1, getCol());
 		return res;
 	}
+	virtual std::string getAssignPos() {return getPosition();}
 protected:
 	size_t line;
 	size_t col;
@@ -409,6 +410,9 @@ public:
 	std::string getType() override {return myId->getType();}
 	StructSymbol * dotNameAnalysis(SymbolTable * symTab);
 	std::string getString();
+	std::string getAssignPos() override {
+		return myId->getPosition();
+	}
 
 private:
 	//Note that DotAccessNode does NOT have its own
@@ -465,7 +469,10 @@ public:
 	virtual bool nameAnalysis(SymbolTable * symTab){
 		return myExp->nameAnalysis(symTab);
 	}
-	bool typeAnalysis() {return true;}
+	virtual bool typeAnalysis() {return true;}
+	std::string getAssignPos() override {
+		return myExp->getAssignPos();
+	}
 protected:
 	ExpNode * myExp;
 };
@@ -475,6 +482,7 @@ public:
 	UnaryMinusNode(ExpNode * exp)
 	: UnaryExpNode(line, col, exp){ }
 	void unparse(std::ostream& out, int indent);
+	bool typeAnalysis() override;
 };
 
 class NotNode : public UnaryExpNode{
@@ -482,6 +490,7 @@ public:
 	NotNode(size_t line, size_t col, ExpNode * exp)
 	: UnaryExpNode(line, col, exp){ }
 	void unparse(std::ostream& out, int indent);
+	bool typeAnalysis() override;
 };
 
 class BinaryExpNode : public ExpNode{
