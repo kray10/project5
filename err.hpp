@@ -127,6 +127,17 @@ class Err{
 		report(pos, "Struct variable assignment");
 	}
 
+	static bool returnVoidFromFunc(std::string pos) {
+		report(pos, "Missing return value");
+	}
+
+	static bool returnValueFromVoidFunc(std::string pos) {
+		report(pos, "Return with a value in a void function");
+	}
+
+	static bool returnBadValue(std::string pos) {
+		report(pos, "Bad return value");
+	}
 };
 
 } //End namespace LILC

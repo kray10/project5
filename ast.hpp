@@ -166,6 +166,7 @@ public:
 	virtual void unparse(std::ostream& out, int indent) = 0;
 	virtual bool nameAnalysis(SymbolTable * symTab) = 0;
 	virtual bool typeAnalysis() = 0;
+	virtual bool checkReturnType(std::string funcType) {return typeAnalysis();}
 };
 
 class FormalsListNode : public ASTNode{
@@ -207,6 +208,13 @@ public:
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
 	bool typeAnalysis();
+	bool checkReturnTypes(std::string funcType) {
+		bool result = true;
+		for (StmtNode* stmt : *myStmts) {
+			result = stmt->checkReturnType(funcType) && result;
+		}
+		return result;
+	}
 
 private:
 	std::list<StmtNode *> * myStmts;
@@ -221,6 +229,9 @@ public:
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
 	bool typeAnalysis();
+	bool checkReturnTypes(std::string funcType) {
+		myStmtList->checkReturnTypes(funcType);
+	}
 
 private:
 	DeclListNode * myDeclList;
@@ -771,7 +782,8 @@ public:
 	}
 	void unparse(std::ostream& out, int indent);
 	bool nameAnalysis(SymbolTable * symTab);
-	bool typeAnalysis() {return true;}
+	bool typeAnalysis();
+	bool checkReturnType(std::string funcType) override;
 
 private:
 	ExpNode * myExp;
@@ -785,7 +797,7 @@ public:
 		mySize = size;
 	}
 	bool nameAnalysis(SymbolTable * symTab) override;
-	bool typeAnalysis() {return true;}
+	bool typeAnalysis() {return myType->typeAnalysis();}
 	void unparse(std::ostream& out, int indent);
 	virtual std::string getTypeString() override;
 	virtual DeclKind getKind() override { return DeclKind::VAR; }

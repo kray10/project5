@@ -88,7 +88,7 @@ bool FnDeclNode::typeAnalysis(){
 	bool result = myRetType->typeAnalysis();
 	result = myId->typeAnalysis() && result;
 	result = myFormals->typeAnalysis() && result;
-	result = myBody->typeAnalysis() && result;
+	result = myBody->checkReturnTypes(myRetType->getTypeString()) && result;
 	return result;
 }
 
@@ -546,6 +546,33 @@ bool WhileStmtNode::typeAnalysis() {
 		result = false;
 	}
 	return result;
+}
+
+bool ReturnStmtNode::checkReturnType(std::string funcType) {
+	if (myExp == nullptr && funcType != "void") {
+		Err::returnVoidFromFunc("0:0");
+		return false;
+	}
+
+	if (myExp != nullptr && funcType == "void") {
+		Err::returnValueFromVoidFunc(myExp->getAssignPos());
+		return false;
+	}
+
+	if (myExp != nullptr && funcType != myExp->getType()) {
+		Err::returnBadValue(myExp->getAssignPos());
+		return false;
+	}
+
+	return true;
+}
+
+bool ReturnStmtNode::typeAnalysis() {
+	if (myExp != nullptr) {
+		return myExp->typeAnalysis();
+	} else {
+		return true;
+	}
 }
 
 /*

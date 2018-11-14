@@ -362,7 +362,12 @@ bool CallStmtNode::nameAnalysis(SymbolTable * symTab) {
 }
 
 bool ReturnStmtNode::nameAnalysis(SymbolTable * symTab) {
-	return myExp->nameAnalysis(symTab);
+	if (myExp != nullptr) {
+		return myExp->nameAnalysis(symTab);
+	} else {
+		return true;
+	}
+
 }
 
 } // End namespace LILC
